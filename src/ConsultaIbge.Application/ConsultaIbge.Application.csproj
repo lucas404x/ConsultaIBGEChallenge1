@@ -6,4 +6,9 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\ConsultaIbge.Data\ConsultaIbge.Data.csproj" />
+    <ProjectReference Include="..\ConsultaIbge.Domain\ConsultaIbge.Domain.csproj" />
+  </ItemGroup>
+
 </Project>
