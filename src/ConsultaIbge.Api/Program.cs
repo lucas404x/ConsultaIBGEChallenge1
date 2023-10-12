@@ -1,24 +1,19 @@
-using ConsultaIbge.Data.Context;
-using Microsoft.EntityFrameworkCore;
+using ConsultaIbge.Api.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
-builder.Services.AddDbContext<ApplicationContext>(options => options.UseSqlite(connectionString));
+builder.Services.AddApiConfiguration(builder.Configuration);
 
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerConfiguration();
+
+builder.Services.RegisterServices();
+
 
 var app = builder.Build();
 
+app.UseSwaggerConfiguration();
 
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
-
-app.UseHttpsRedirection();
+app.UseApiConfiguration(app.Environment);
 
 var summaries = new[]
 {

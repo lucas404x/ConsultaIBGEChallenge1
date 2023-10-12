@@ -1,4 +1,4 @@
-﻿namespace ConsultaIbge.Data.Uow;
+﻿namespace ConsultaIbge.Core.Data;
 
 public interface IUnitOfWork
 {

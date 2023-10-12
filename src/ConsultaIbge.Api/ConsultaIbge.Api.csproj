@@ -17,7 +17,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\ConsultaIbge.Application\ConsultaIbge.Application.csproj" />
+    <ProjectReference Include="..\ConsultaIbge.Core\ConsultaIbge.Core.csproj" />
     <ProjectReference Include="..\ConsultaIbge.Data\ConsultaIbge.Data.csproj" />
+    <ProjectReference Include="..\ConsultaIbge.Domain\ConsultaIbge.Domain.csproj" />
   </ItemGroup>
 
 </Project>
