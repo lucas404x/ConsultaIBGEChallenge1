@@ -15,9 +15,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsultaIbge.Tests", "tests
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsultaIbge.Domain", "src\ConsultaIbge.Domain\ConsultaIbge.Domain.csproj", "{85D619CF-5B1C-43A6-80D8-6D5A71D039EE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsultaIbge.Data", "src\ConsultaIbge.Data\ConsultaIbge.Data.csproj", "{AC389B00-E7D2-4580-9E50-CEE44B43BC9A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsultaIbge.Data", "src\ConsultaIbge.Data\ConsultaIbge.Data.csproj", "{AC389B00-E7D2-4580-9E50-CEE44B43BC9A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsultaIbge.Application", "src\ConsultaIbge.Application\ConsultaIbge.Application.csproj", "{22C6BC39-BDE0-4DB5-A80E-BAFB22994D44}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsultaIbge.Application", "src\ConsultaIbge.Application\ConsultaIbge.Application.csproj", "{22C6BC39-BDE0-4DB5-A80E-BAFB22994D44}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
