@@ -16,7 +16,7 @@ public class IbgeService : IIbgeService
 
     public async Task<PagedResult<Ibge>> GetAllAsync(int pageSize, int pageIndex, string query = null) => await _repository.GetAllAsync(pageSize, pageIndex, query);
 
-    public async Task<Ibge> GetByIdAsync(string id) => await _repository.GetByIdAsync(id);
+    public async Task<Ibge?> GetByIdAsync(string id) => await _repository.GetByIdAsync(id);
 
     public async Task<bool> Add(IbgeAddDto entity)
     {

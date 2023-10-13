@@ -39,7 +39,7 @@ app.MapPost("/ibge/add", async (IIbgeService _service, IbgeAddDto entity) =>
     return Results.Ok();
 });
 
-app.MapPost("/ibge/update", async (IIbgeService _service, IbgeUpdateDto entity, string id) =>
+app.MapPut("/ibge/update", async (IIbgeService _service, IbgeUpdateDto entity, string id) =>
 {
     if(id != entity.Id) return Results.BadRequest();
 

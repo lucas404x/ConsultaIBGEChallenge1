@@ -42,7 +42,7 @@ public class IbgeRepository : IIbgeRepository
 
     }
 
-    public async Task<Ibge> GetByIdAsync(string id) => await _context.Ibges.FindAsync(id);
+    public async Task<Ibge?> GetByIdAsync(string id) => await _context.Ibges.AsNoTracking().SingleOrDefaultAsync(x => x.Id == id);
 
     public void Add(Ibge entity) => _context.Ibges.Add(entity);
 
