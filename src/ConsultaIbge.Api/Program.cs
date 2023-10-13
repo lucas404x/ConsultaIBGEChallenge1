@@ -1,4 +1,7 @@
 using ConsultaIbge.Api.Configuration;
+using ConsultaIbge.Application.Dtos;
+using ConsultaIbge.Application.Interfaces;
+using Microsoft.AspNetCore.Mvc;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,29 +18,52 @@ app.UseSwaggerConfiguration();
 
 app.UseApiConfiguration(app.Environment);
 
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
 
-app.MapGet("/weatherforecast", () =>
+//app.MapGet("/", async (IIbgeService _service, [FromQuery]IbgeGetAllDto entity) => await _service.GetAllAsync(entity.PageSize, entity.PageIndex, entity.Query));
+
+app.MapGet("/ibge/{id}", async (IIbgeService _service, string id) =>
 {
-    var forecast = Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast")
-.WithOpenApi();
+    var result = await _service.GetByIdAsync(id);
+
+    if (result is null) return Results.NotFound();
+
+    return Results.Ok(result);
+});
+
+app.MapPost("/ibge/add", async (IIbgeService _service, IbgeAddDto entity) =>
+{
+    var result = await _service.Add(entity);
+
+    if(!result) return Results.BadRequest();
+
+    return Results.Ok();
+});
+
+app.MapPost("/ibge/update", async (IIbgeService _service, IbgeUpdateDto entity, string id) =>
+{
+    if(id != entity.Id) return Results.BadRequest();
+
+    var ibge = await _service.GetByIdAsync(id);
+    if(ibge is null) return Results.NotFound();
+
+    var result = await _service.Update(entity);
+
+    if (!result) return Results.BadRequest();
+
+    return Results.Ok();
+});
+
+app.MapDelete("/ibge/remove/{id}", async (IIbgeService _service, string id) =>
+{
+    var entity = await _service.GetByIdAsync(id);
+    if (entity is null) return Results.NotFound();
+
+    var result = await _service.Delete(id);
+
+    if (!result) return Results.BadRequest();
+
+    return Results.Ok();
+
+});
 
 app.Run();
-
-internal record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
