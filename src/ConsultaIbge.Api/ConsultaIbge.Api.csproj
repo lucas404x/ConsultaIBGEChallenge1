@@ -8,7 +8,19 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.12" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SQLite" Version="7.0.12" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="7.0.12">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ConsultaIbge.Application\ConsultaIbge.Application.csproj" />
+    <ProjectReference Include="..\ConsultaIbge.Core\ConsultaIbge.Core.csproj" />
+    <ProjectReference Include="..\ConsultaIbge.Data\ConsultaIbge.Data.csproj" />
+    <ProjectReference Include="..\ConsultaIbge.Domain\ConsultaIbge.Domain.csproj" />
   </ItemGroup>
 
 </Project>
