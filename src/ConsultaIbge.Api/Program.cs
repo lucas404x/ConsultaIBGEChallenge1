@@ -1,7 +1,8 @@
 using ConsultaIbge.Api.Configuration;
 using ConsultaIbge.Application.Dtos;
+using ConsultaIbge.Application.Filters;
 using ConsultaIbge.Application.Interfaces;
-using Microsoft.AspNetCore.Mvc;
+using FluentValidation;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,7 +12,6 @@ builder.Services.AddSwaggerConfiguration();
 
 builder.Services.RegisterServices();
 
-
 var app = builder.Build();
 
 app.UseSwaggerConfiguration();
@@ -20,6 +20,20 @@ app.UseApiConfiguration(app.Environment);
 
 
 //app.MapGet("/", async (IIbgeService _service, [FromQuery]IbgeGetAllDto entity) => await _service.GetAllAsync(entity.PageSize, entity.PageIndex, entity.Query));
+
+app.MapPost("/login", async (IUserService _service, IValidator<UserLoginDto> _validador, UserLoginDto request) =>
+{
+    return Results.Ok();
+}).AddEndpointFilter<ValidationFilter<UserLoginDto>>();
+
+app.MapPost("/login/register", async (IUserService _service, IbgeAddDto entity) =>
+{
+    //var result = await _service.Add(entity);
+
+    //if (!result) return Results.BadRequest();
+    
+    return Results.Ok();
+});
 
 app.MapGet("/ibge/{id}", async (IIbgeService _service, string id) =>
 {
