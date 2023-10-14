@@ -42,13 +42,13 @@ public class IbgeRepository : IIbgeRepository
 
     }
 
-    public async Task<Ibge> GetByIdAsync(int id) => await _context.Ibges.FindAsync(id);
+    public async Task<Ibge?> GetByIdAsync(string id) => await _context.Ibges.AsNoTracking().SingleOrDefaultAsync(x => x.Id == id);
 
     public void Add(Ibge entity) => _context.Ibges.Add(entity);
 
     public void Update(Ibge entity) => _context.Ibges.Update(entity);
 
-    public void Delete(Ibge entity) => _context.Ibges.Remove(entity);    
+    public void Delete(Ibge entity) => _context.Ibges.Remove(entity);
 
-    public void Dispose() => _context?.Dispose();
+    public void Dispose() => _context.Dispose();
 }
