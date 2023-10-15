@@ -10,24 +10,9 @@ public static class ApiConfiguration
 {
     public static void AddApiConfiguration(this IServiceCollection services, IConfiguration configuration)
     {
-        var connectionString = configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
-        services.AddDbContext<ApplicationContext>(options => options.UseSqlite(connectionString));
-
         var jwtKey = configuration.GetValue<string>("Auth:PrivateKey") ?? throw new InvalidOperationException("JWT Private key not found.");
         JwtHelper.LoadFromSettings(jwtKey);
 
-        services.AddEndpointsApiExplorer();
-
-        services.AddCors(options =>
-        {
-            options.AddPolicy("Total",
-                builder =>
-                    builder
-                        .AllowAnyOrigin()
-                        .AllowAnyMethod()
-                        .AllowAnyHeader());
-        });
-        
         services.AddAuthentication(x =>
         {
             x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -44,6 +29,21 @@ public static class ApiConfiguration
 
         });
         services.AddAuthorization();
+
+        var connectionString = configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+        services.AddDbContext<ApplicationContext>(options => options.UseSqlite(connectionString));
+
+        services.AddEndpointsApiExplorer();
+
+        services.AddCors(options =>
+        {
+            options.AddPolicy("Total",
+                builder =>
+                    builder
+                        .AllowAnyOrigin()
+                        .AllowAnyMethod()
+                        .AllowAnyHeader());
+        });
     }
 
     public static void UseApiConfiguration(this WebApplication app)
@@ -51,10 +51,11 @@ public static class ApiConfiguration
         if (app.Environment.IsDevelopment())
             app.UseDeveloperExceptionPage();
 
+        app.UseAuthentication();
+        app.UseAuthorization();
+
         app.UseHttpsRedirection();
 
         app.UseCors("Total");
-        app.UseAuthentication();
-        app.UseAuthorization();
     }
 }

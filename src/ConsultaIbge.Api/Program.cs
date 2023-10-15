@@ -12,11 +12,9 @@ builder.Services.AddSwaggerConfiguration();
 builder.Services.RegisterServices();
 
 var app = builder.Build();
-
 app.UseSwaggerConfiguration();
 
 app.UseApiConfiguration();
-
 
 app.MapPost("/user/login", async (IUserService _service, UserLoginDto request) =>
 {
