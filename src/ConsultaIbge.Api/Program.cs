@@ -1,4 +1,7 @@
 using ConsultaIbge.Api.Configuration;
+using ConsultaIbge.Application.Dtos;
+using ConsultaIbge.Application.Filters;
+using ConsultaIbge.Application.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,36 +11,68 @@ builder.Services.AddSwaggerConfiguration();
 
 builder.Services.RegisterServices();
 
-
 var app = builder.Build();
-
 app.UseSwaggerConfiguration();
 
-app.UseApiConfiguration(app.Environment);
+app.UseApiConfiguration();
 
-var summaries = new[]
+app.MapPost("/user/login", async (IUserService _service, UserLoginDto request) =>
 {
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
+    var result = await _service.Login(request);
+    if (result is null) return Results.BadRequest();
+    return Results.Ok(result);
+}).AddEndpointFilter<ValidationFilter<UserLoginDto>>();
 
-app.MapGet("/weatherforecast", () =>
+app.MapPost("/user/register", async (IUserService _service, UserRegisterDto request) =>
 {
-    var forecast = Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast")
-.WithOpenApi();
+    var result = await _service.Register(request);
+    if (result is null) return Results.BadRequest();
+    return Results.Ok(result);
+}).AddEndpointFilter<ValidationFilter<UserRegisterDto>>(); ;
+
+app.MapGet("/ibge/{id}", async (IIbgeService _service, string id) =>
+{
+    var result = await _service.GetByIdAsync(id);
+
+    if (result is null) return Results.NotFound();
+
+    return Results.Ok(result);
+}).RequireAuthorization();
+
+app.MapPost("/ibge/add", async (IIbgeService _service, IbgeAddDto entity) =>
+{
+    var result = await _service.Add(entity);
+
+    if(!result) return Results.BadRequest();
+
+    return Results.Ok();
+}).RequireAuthorization();
+
+app.MapPut("/ibge/update", async (IIbgeService _service, IbgeUpdateDto entity, string id) =>
+{
+    if(id != entity.Id) return Results.BadRequest();
+
+    var ibge = await _service.GetByIdAsync(id);
+    if(ibge is null) return Results.NotFound();
+
+    var result = await _service.Update(entity);
+
+    if (!result) return Results.BadRequest();
+
+    return Results.Ok();
+}).RequireAuthorization();
+
+app.MapDelete("/ibge/remove/{id}", async (IIbgeService _service, string id) =>
+{
+    var entity = await _service.GetByIdAsync(id);
+    if (entity is null) return Results.NotFound();
+
+    var result = await _service.Delete(id);
+
+    if (!result) return Results.BadRequest();
+
+    return Results.Ok();
+
+}).RequireAuthorization();
 
 app.Run();
-
-internal record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
