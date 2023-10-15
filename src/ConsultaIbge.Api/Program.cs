@@ -2,7 +2,6 @@ using ConsultaIbge.Api.Configuration;
 using ConsultaIbge.Application.Dtos;
 using ConsultaIbge.Application.Filters;
 using ConsultaIbge.Application.Interfaces;
-using FluentValidation;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,24 +15,22 @@ var app = builder.Build();
 
 app.UseSwaggerConfiguration();
 
-app.UseApiConfiguration(app.Environment);
+app.UseApiConfiguration();
 
 
-//app.MapGet("/", async (IIbgeService _service, [FromQuery]IbgeGetAllDto entity) => await _service.GetAllAsync(entity.PageSize, entity.PageIndex, entity.Query));
-
-app.MapPost("/login", async (IUserService _service, IValidator<UserLoginDto> _validador, UserLoginDto request) =>
+app.MapPost("/user/login", async (IUserService _service, UserLoginDto request) =>
 {
-    return Results.Ok();
+    var result = await _service.Login(request);
+    if (result is null) return Results.BadRequest();
+    return Results.Ok(result);
 }).AddEndpointFilter<ValidationFilter<UserLoginDto>>();
 
-app.MapPost("/login/register", async (IUserService _service, IbgeAddDto entity) =>
+app.MapPost("/user/register", async (IUserService _service, UserRegisterDto request) =>
 {
-    //var result = await _service.Add(entity);
-
-    //if (!result) return Results.BadRequest();
-    
-    return Results.Ok();
-});
+    var result = await _service.Register(request);
+    if (result is null) return Results.BadRequest();
+    return Results.Ok(result);
+}).AddEndpointFilter<ValidationFilter<UserRegisterDto>>(); ;
 
 app.MapGet("/ibge/{id}", async (IIbgeService _service, string id) =>
 {
@@ -42,7 +39,7 @@ app.MapGet("/ibge/{id}", async (IIbgeService _service, string id) =>
     if (result is null) return Results.NotFound();
 
     return Results.Ok(result);
-});
+}).RequireAuthorization();
 
 app.MapPost("/ibge/add", async (IIbgeService _service, IbgeAddDto entity) =>
 {
@@ -51,7 +48,7 @@ app.MapPost("/ibge/add", async (IIbgeService _service, IbgeAddDto entity) =>
     if(!result) return Results.BadRequest();
 
     return Results.Ok();
-});
+}).RequireAuthorization();
 
 app.MapPut("/ibge/update", async (IIbgeService _service, IbgeUpdateDto entity, string id) =>
 {
@@ -65,7 +62,7 @@ app.MapPut("/ibge/update", async (IIbgeService _service, IbgeUpdateDto entity, s
     if (!result) return Results.BadRequest();
 
     return Results.Ok();
-});
+}).RequireAuthorization();
 
 app.MapDelete("/ibge/remove/{id}", async (IIbgeService _service, string id) =>
 {
@@ -78,6 +75,6 @@ app.MapDelete("/ibge/remove/{id}", async (IIbgeService _service, string id) =>
 
     return Results.Ok();
 
-});
+}).RequireAuthorization();
 
 app.Run();

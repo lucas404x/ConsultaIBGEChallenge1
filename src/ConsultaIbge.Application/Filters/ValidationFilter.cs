@@ -21,8 +21,6 @@ public class ValidationFilter<T> : IEndpointFilter
                     statusCode: (int)HttpStatusCode.UnprocessableEntity);
             }
         }
-
-        // Otherwise invoke the next filter in the pipeline
         return await next.Invoke(context);
     }
 }

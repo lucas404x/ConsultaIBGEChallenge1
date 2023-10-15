@@ -13,14 +13,17 @@ public static class DependencyInjectionConfig
     public static void RegisterServices(this IServiceCollection services)
     {
         // Data
-        services.AddScoped<IIbgeRepository, IbgeRepository>();
         services.AddScoped<ApplicationContext>();
+        services.AddScoped<IIbgeRepository, IbgeRepository>();
+        services.AddScoped<IUserRepository, UserRepository>();
 
         // Service
         services.AddScoped<IIbgeService, IbgeService>();
         services.AddScoped<IUserService, UserService>();
+        services.AddTransient<IPasswordHasherService, PasswordHasherService>();
+        services.AddTransient<ITokenService, TokenService>();
 
         // Fluent
-        services.AddValidatorsFromAssemblyContaining(typeof(IbgeAddValidation));
+        services.AddValidatorsFromAssemblyContaining<IbgeAddValidation>();
     }
 }

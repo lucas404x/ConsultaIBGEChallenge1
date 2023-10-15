@@ -4,6 +4,6 @@ namespace ConsultaIbge.Application.Interfaces;
 
 public interface IUserService
 {
-    public Task<string> Login(UserLoginDto userDto);
-    public Task<string> Register(UserLoginDto userDto);
+    public Task<UserResponseDto> Login(UserLoginDto userDto);
+    public Task<UserResponseDto> Register(UserRegisterDto userDto);
 }

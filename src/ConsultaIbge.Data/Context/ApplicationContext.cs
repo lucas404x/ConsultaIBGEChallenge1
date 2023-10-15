@@ -9,6 +9,7 @@ public class ApplicationContext : DbContext, IUnitOfWork
     public ApplicationContext(DbContextOptions<ApplicationContext> options) : base(options) { }
 
     public DbSet<Ibge> Ibges { get; set; }
+    public DbSet<User> Users { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
