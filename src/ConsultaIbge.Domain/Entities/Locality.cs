@@ -1,8 +1,8 @@
 ﻿namespace ConsultaIbge.Domain.Entities;
 
-public class Ibge
+public class Locality
 {
-    public Ibge(string id, string state, string city)
+    public Locality(string id, string state, string city)
     {
         Id = id;
         State = state;

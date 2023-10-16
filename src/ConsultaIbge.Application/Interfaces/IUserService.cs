@@ -1,4 +1,4 @@
-﻿using ConsultaIbge.Application.Dtos;
+﻿using ConsultaIbge.Application.Dtos.User;
 
 namespace ConsultaIbge.Application.Interfaces;
 

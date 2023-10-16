@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace ConsultaIbge.Data.Mappings;
 
-public class IbgeMapping : IEntityTypeConfiguration<Ibge>
+public class LocalityMapping : IEntityTypeConfiguration<Locality>
 {
-    public void Configure(EntityTypeBuilder<Ibge> builder)
+    public void Configure(EntityTypeBuilder<Locality> builder)
     {
         builder.HasKey(i => i.Id);
 

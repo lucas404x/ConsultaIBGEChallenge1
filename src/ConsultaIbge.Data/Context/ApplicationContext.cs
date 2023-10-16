@@ -8,7 +8,7 @@ public class ApplicationContext : DbContext, IUnitOfWork
 {
     public ApplicationContext(DbContextOptions<ApplicationContext> options) : base(options) { }
 
-    public DbSet<Ibge> Ibges { get; set; }
+    public DbSet<Locality> Localities { get; set; }
     public DbSet<User> Users { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -18,15 +18,15 @@ public class ApplicationContext : DbContext, IUnitOfWork
 
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(ApplicationContext).Assembly);
 
-        modelBuilder.Entity<Ibge>()
+        modelBuilder.Entity<Locality>()
             .HasIndex(i => i.City)
             .HasDatabaseName("IX_IBGE_City");        
 
-        modelBuilder.Entity<Ibge>()
+        modelBuilder.Entity<Locality>()
             .HasIndex(i => i.State)
             .HasDatabaseName("IX_IBGE_State");
 
-        modelBuilder.Entity<Ibge>()
+        modelBuilder.Entity<Locality>()
             .HasIndex(i => i.Id)
             .HasDatabaseName("IX_IBGE_Id");
     }
