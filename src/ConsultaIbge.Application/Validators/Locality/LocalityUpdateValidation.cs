@@ -1,16 +1,11 @@
-﻿using ConsultaIbge.Application.Dtos;
+﻿using ConsultaIbge.Application.Dtos.Locality;
 using FluentValidation;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace ConsultaIbge.Application.Validators;
+namespace ConsultaIbge.Application.Validators.Locality;
 
-public class IbgeAddValidation : AbstractValidator<IbgeAddDto>
+public class LocalityUpdateValidation : AbstractValidator<LocalityUpdateDto>
 {
-    public IbgeAddValidation()
+    public LocalityUpdateValidation()
     {
         RuleFor(x => x.Id)
             .NotEmpty()

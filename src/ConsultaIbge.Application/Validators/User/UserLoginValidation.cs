@@ -1,15 +1,12 @@
-﻿using ConsultaIbge.Application.Dtos;
+﻿using ConsultaIbge.Application.Dtos.User;
 using FluentValidation;
 
-namespace ConsultaIbge.Application.Validators;
+namespace ConsultaIbge.Application.Validators.User;
 
-public class UserRegisterValidation : AbstractValidator<UserRegisterDto>
+public class UserLoginValidation : AbstractValidator<UserLoginDto>
 {
-    public UserRegisterValidation()
+    public UserLoginValidation()
     {
-        RuleFor(x => x.Name)
-            .NotEmpty()
-            .WithMessage("É necessário informar o nome completo.");
         RuleFor(x => x.Email)
             .EmailAddress(FluentValidation.Validators.EmailValidationMode.AspNetCoreCompatible)
             .WithMessage("É necessário informar um email válido.");

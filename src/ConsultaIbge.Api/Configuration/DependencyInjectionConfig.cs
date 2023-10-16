@@ -1,6 +1,6 @@
 ﻿using ConsultaIbge.Application.Interfaces;
 using ConsultaIbge.Application.Services;
-using ConsultaIbge.Application.Validators;
+using ConsultaIbge.Application.Validators.Locality;
 using ConsultaIbge.Data.Context;
 using ConsultaIbge.Data.Repositories;
 using ConsultaIbge.Domain.Interfaces;
@@ -14,16 +14,17 @@ public static class DependencyInjectionConfig
     {
         // Data
         services.AddScoped<ApplicationContext>();
-        services.AddScoped<IIbgeRepository, IbgeRepository>();
+        services.AddScoped<ILocalityRepository, LocalityRepository>();
         services.AddScoped<IUserRepository, UserRepository>();
 
         // Service
-        services.AddScoped<IIbgeService, IbgeService>();
+        services.AddScoped<ILocalityService, LocalityService>();
         services.AddScoped<IUserService, UserService>();
         services.AddTransient<IPasswordHasherService, PasswordHasherService>();
         services.AddTransient<ITokenService, TokenService>();
 
         // Fluent
-        services.AddValidatorsFromAssemblyContaining<IbgeAddValidation>();
+        services.AddValidatorsFromAssemblyContaining<LocalityAddValidation>();
+        services.AddValidatorsFromAssemblyContaining<LocalityUpdateValidation>();
     }
 }
