@@ -52,7 +52,7 @@ app.MapPost("v1/locality/add", async (ILocalityService _service, LocalityAddDto 
     if (!result) return Results.BadRequest();
 
     return Results.Ok();
-}).RequireAuthorization();
+}).RequireAuthorization().AddEndpointFilter<ValidationFilter<LocalityAddDto>>();
 
 app.MapPut("v1/locality/update", async (ILocalityService _service, LocalityUpdateDto entity, string id) =>
 {
@@ -66,7 +66,7 @@ app.MapPut("v1/locality/update", async (ILocalityService _service, LocalityUpdat
     if (!result) return Results.BadRequest();
 
     return Results.Ok();
-}).RequireAuthorization();
+}).RequireAuthorization().AddEndpointFilter<ValidationFilter<LocalityUpdateDto>>();
 
 app.MapDelete("v1/locality/remove/{id}", async (ILocalityService _service, string id) =>
 {
