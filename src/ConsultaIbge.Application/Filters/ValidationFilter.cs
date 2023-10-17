@@ -1,7 +1,7 @@
-﻿using FluentValidation;
+﻿using ConsultaIbge.Application.Dtos.Commom;
+using FluentValidation;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
-using System.Net;
 
 namespace ConsultaIbge.Application.Filters;
 
@@ -17,8 +17,9 @@ public class ValidationFilter<T> : IEndpointFilter
             var validationResult = await validator.ValidateAsync(argToValidate!);
             if (!validationResult.IsValid)
             {
-                return Results.ValidationProblem(validationResult.ToDictionary(),
-                    statusCode: (int)HttpStatusCode.UnprocessableEntity);
+                var response = new ApiResponse<T>();
+                response.SetError(validationResult.Errors.ConvertAll(x => x.ErrorMessage));
+                return Results.UnprocessableEntity(response);
             }
         }
         return await next.Invoke(context);
