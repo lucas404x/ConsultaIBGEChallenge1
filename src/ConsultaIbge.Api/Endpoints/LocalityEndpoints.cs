@@ -21,14 +21,28 @@ public static class LocalityEndpoints
             .ProducesProblem(StatusCodes.Status404NotFound)
             .ProducesProblem(StatusCodes.Status422UnprocessableEntity)
             .ProducesProblem(StatusCodes.Status500InternalServerError)
-            .WithSummary("Get all Localities");
+            .WithSummary("Get all locations");
 
-        root.MapGet("/{id}", GetLocality)
-            .Produces<ApiResponse<Locality>>()
+        root.MapGet("/get-city", GetByCity)
+            .Produces<PagedResult<Locality>>()
             .ProducesProblem(StatusCodes.Status404NotFound)
             .ProducesProblem(StatusCodes.Status422UnprocessableEntity)
             .ProducesProblem(StatusCodes.Status500InternalServerError)
-            .WithSummary("Get Locality based on provided id");
+            .WithSummary("Get a location by City");
+
+        root.MapGet("/get-state", GetByState)
+           .Produces<PagedResult<Locality>>()
+           .ProducesProblem(StatusCodes.Status404NotFound)
+           .ProducesProblem(StatusCodes.Status422UnprocessableEntity)
+           .ProducesProblem(StatusCodes.Status500InternalServerError)
+           .WithSummary("Get a location by State");
+
+        root.MapGet("/get-ibge-code", GetByIbgeCode)
+           .Produces<PagedResult<Locality>>()
+           .ProducesProblem(StatusCodes.Status404NotFound)
+           .ProducesProblem(StatusCodes.Status422UnprocessableEntity)
+           .ProducesProblem(StatusCodes.Status500InternalServerError)
+           .WithSummary("Get a location by IBGE Code");
 
         root.MapPost("/", AddLocality)
             .AddEndpointFilter<ValidationFilter<LocalityAddDto>>()
@@ -54,27 +68,22 @@ public static class LocalityEndpoints
             .ProducesProblem(StatusCodes.Status404NotFound)
             .ProducesProblem(StatusCodes.Status422UnprocessableEntity)
             .ProducesProblem(StatusCodes.Status500InternalServerError)
-            .WithSummary("Update a location given an id");
+            .WithSummary("Remove a location given an id");
 
         return app;
     }
 
-    public static async Task<PagedResult<Locality>> GetAll([FromServices] ILocalityService _service, [FromQuery] int ps = 10, [FromQuery] int page = 1, [FromQuery] string query = null) 
-    {
-        return await _service.GetAllAsync(ps, page, query);
-    }
+    public static async Task<PagedResult<Locality>> GetAll([FromServices] ILocalityService _service, [FromQuery] int ps = 10, [FromQuery] int page = 1, [FromQuery] string query = null) => 
+        await _service.GetAllAsync(ps, page, query);
 
-    public static async Task<IResult> GetLocality([FromServices] ILocalityService _service, [FromQuery] string id)
-    {
-        var response = new ApiResponse<Locality>();
-        var result = await _service.GetByIdAsync(id);
-        if (result is null)
-        {
-            response.SetError($"A localidade '{id}' não foi encontrada.");
-            Results.NotFound(response);
-        }
-        return Results.Ok(response);
-    }
+    public static async Task<PagedResult<Locality>> GetByCity([FromServices] ILocalityService _service, [FromQuery] int ps = 10, [FromQuery] int page = 1, [FromQuery] string query = null) =>
+            await _service.GetByCityAsync(ps, page, query);
+
+    public static async Task<PagedResult<Locality>> GetByState([FromServices] ILocalityService _service, [FromQuery] int ps = 10, [FromQuery] int page = 1, [FromQuery] string query = null) =>
+        await _service.GetByStateAsync(ps, page, query);
+
+    public static async Task<PagedResult<Locality>> GetByIbgeCode([FromServices] ILocalityService _service, [FromQuery] int ps = 10, [FromQuery] int page = 1, [FromQuery] string query = null) =>
+        await _service.GetByIbgeCodeAsync(ps, page, query);
 
     public static async Task<IResult> AddLocality([FromServices] ILocalityService _service, [FromBody] LocalityAddDto request)
     {

@@ -17,24 +17,20 @@ public class LocalityRepository : ILocalityRepository
 
     public IUnitOfWork UnitOfWork => _context;
 
-    public async Task<PagedResult<Locality>> GetAllAsync(int pageSize, int pageIndex, string query = null)
+    public async Task<PagedResult<Locality>> GetAsync(int pageSize, int pageIndex, string query = null, string flag = "default")
     {
-        var localityQuery = _context.Localities.AsQueryable();
+        var localityQuery = DefineQueryByFlag(query, flag);
 
         var locality = await localityQuery.AsNoTrackingWithIdentityResolution()
-                                  .Where(x => EF.Functions.Like(x.State, $"%{query}%"))
                                   .OrderBy(x => x.State)
                                   .Skip(pageSize * (pageIndex - 1))
                                   .Take(pageSize).ToListAsync();
 
-        var total = await localityQuery.AsNoTrackingWithIdentityResolution()
-                                   .Where(x => EF.Functions.Like(x.State, $"%{query}%"))
-                                   .CountAsync();
+        var total = await localityQuery.AsNoTrackingWithIdentityResolution().CountAsync();
 
         return new PagedResult<Locality>(locality, total, pageIndex, pageSize, query);
 
     }
-    //public async Task<IEnumerable<Locality>> GetAllAsync() => await _context.Localities.ToListAsync();
 
     public async Task<Locality> GetByIdAsync(string id) => await _context.Localities.AsNoTracking().SingleOrDefaultAsync(x => x.Id == id);
 
@@ -45,4 +41,17 @@ public class LocalityRepository : ILocalityRepository
     public void Delete(Locality entity) => _context.Localities.Remove(entity);
 
     public void Dispose() => _context.Dispose();
+
+    #region Private Methods
+    private IQueryable<Locality> DefineQueryByFlag(string query = null, string flag = null)
+    {
+        return flag switch
+        {
+            "city" => _context.Localities.AsQueryable().Where(x => EF.Functions.Like(x.City, $"%{query}%")),
+            "state" => _context.Localities.AsQueryable().Where(x => EF.Functions.Like(x.State, $"%{query}%")),
+            "ibge" => _context.Localities.AsQueryable().Where(x => EF.Functions.Like(x.Id, $"%{query}%")),
+            _ => _context.Localities.AsQueryable().Where(x => EF.Functions.Like(x.State, $"%{query}%")),
+        };
+    } 
+    #endregion
 }

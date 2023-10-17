@@ -14,7 +14,13 @@ public class LocalityService : ILocalityService
         _repository = repository;
     }
 
-    public async Task<PagedResult<Locality>>GetAllAsync(int pageSize, int pageIndex, string query) => await _repository.GetAllAsync(pageSize, pageIndex, query);
+    public async Task<PagedResult<Locality>>GetAllAsync(int pageSize, int pageIndex, string query) => await _repository.GetAsync(pageSize, pageIndex, query, "default");
+
+    public async Task<PagedResult<Locality>> GetByCityAsync(int pageSize, int pageIndex, string query) => await _repository.GetAsync(pageSize, pageIndex, query, "city");
+
+    public async Task<PagedResult<Locality>> GetByStateAsync(int pageSize, int pageIndex, string query) => await _repository.GetAsync(pageSize, pageIndex, query, "state");
+
+    public async Task<PagedResult<Locality>> GetByIbgeCodeAsync(int pageSize, int pageIndex, string query) => await _repository.GetAsync(pageSize, pageIndex, query, "ibge");
 
     public async Task<Locality?> GetByIdAsync(string id) => await _repository.GetByIdAsync(id);
 
