@@ -16,12 +16,33 @@ public static class LocalityEndpoints
             .WithOpenApi()
             .RequireAuthorization();
 
-        root.MapGet("/{id}", GetLocality)
-            .Produces<ApiResponse<Locality>>()
+        root.MapGet("/", GetAll)
+            .Produces<PagedResult<Locality>>()
             .ProducesProblem(StatusCodes.Status404NotFound)
             .ProducesProblem(StatusCodes.Status422UnprocessableEntity)
             .ProducesProblem(StatusCodes.Status500InternalServerError)
-            .WithSummary("Get Locality based on provided id");
+            .WithSummary("Get all locations");
+
+        root.MapGet("/get-city", GetByCity)
+            .Produces<PagedResult<Locality>>()
+            .ProducesProblem(StatusCodes.Status404NotFound)
+            .ProducesProblem(StatusCodes.Status422UnprocessableEntity)
+            .ProducesProblem(StatusCodes.Status500InternalServerError)
+            .WithSummary("Get a location by City");
+
+        root.MapGet("/get-state", GetByState)
+           .Produces<PagedResult<Locality>>()
+           .ProducesProblem(StatusCodes.Status404NotFound)
+           .ProducesProblem(StatusCodes.Status422UnprocessableEntity)
+           .ProducesProblem(StatusCodes.Status500InternalServerError)
+           .WithSummary("Get a location by State");
+
+        root.MapGet("/get-ibge-code", GetByIbgeCode)
+           .Produces<PagedResult<Locality>>()
+           .ProducesProblem(StatusCodes.Status404NotFound)
+           .ProducesProblem(StatusCodes.Status422UnprocessableEntity)
+           .ProducesProblem(StatusCodes.Status500InternalServerError)
+           .WithSummary("Get a location by IBGE Code");
 
         root.MapPost("/", AddLocality)
             .AddEndpointFilter<ValidationFilter<LocalityAddDto>>()
@@ -47,20 +68,60 @@ public static class LocalityEndpoints
             .ProducesProblem(StatusCodes.Status404NotFound)
             .ProducesProblem(StatusCodes.Status422UnprocessableEntity)
             .ProducesProblem(StatusCodes.Status500InternalServerError)
-            .WithSummary("Update a location given an id");
+            .WithSummary("Remove a location given an id");
 
         return app;
     }
 
-    public static async Task<IResult> GetLocality([FromServices] ILocalityService _service, [FromQuery] string id)
+    public static async Task<IResult> GetAll([FromServices] ILocalityService _service, [FromQuery] int ps = 10, [FromQuery] int page = 1, [FromQuery] string query = null)
     {
-        var response = new ApiResponse<Locality>();
-        var result = await _service.GetByIdAsync(id);
-        if (result is null)
+        var response = new ApiResponse<PagedResult<Locality>>();
+        var result = await _service.GetAllAsync(ps, page, query);
+        if(result.TotalResults == 0)
         {
-            response.SetError($"A localidade '{id}' não foi encontrada.");
-            Results.NotFound(response);
+            response.SetError("A consulta não encontrou nenhum resultado.");
+            return Results.Json(response, statusCode: StatusCodes.Status404NotFound);
         }
+        response.SetSuccess(result);
+        return Results.Ok(response);
+    }
+
+    public static async Task<IResult> GetByCity([FromServices] ILocalityService _service, [FromQuery] int ps = 10, [FromQuery] int page = 1, [FromQuery] string query = null)
+    {
+        var response = new ApiResponse<PagedResult<Locality>>();
+        var result = await _service.GetByCityAsync(ps, page, query);
+        if (result.TotalResults == 0)
+        {
+            response.SetError("A consulta não encontrou nenhum resultado.");
+            return Results.Json(response, statusCode: StatusCodes.Status404NotFound);
+        }
+        response.SetSuccess(result);
+        return Results.Ok(response);
+    }
+
+    public static async Task<IResult> GetByState([FromServices] ILocalityService _service, [FromQuery] int ps = 10, [FromQuery] int page = 1, [FromQuery] string query = null)
+    {
+        var response = new ApiResponse<PagedResult<Locality>>();
+        var result = await _service.GetByStateAsync(ps, page, query);
+        if (result.TotalResults == 0)
+        {
+            response.SetError("A consulta não encontrou nenhum resultado.");
+            return Results.Json(response, statusCode: StatusCodes.Status404NotFound);
+        }
+        response.SetSuccess(result);
+        return Results.Ok(response);
+    }
+
+    public static async Task<IResult> GetByIbgeCode([FromServices] ILocalityService _service, [FromQuery] int ps = 10, [FromQuery] int page = 1, [FromQuery] string query = null)
+    {
+        var response = new ApiResponse<PagedResult<Locality>>();
+        var result = await _service.GetByIbgeCodeAsync(ps, page, query);
+        if (result.TotalResults == 0)
+        {
+            response.SetError("A consulta não encontrou nenhum resultado.");
+            return Results.Json(response, statusCode: StatusCodes.Status404NotFound);
+        }
+        response.SetSuccess(result);
         return Results.Ok(response);
     }
 

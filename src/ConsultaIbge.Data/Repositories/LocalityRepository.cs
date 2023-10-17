@@ -1,4 +1,5 @@
 ﻿using ConsultaIbge.Core.Data;
+using ConsultaIbge.Core.Enums;
 using ConsultaIbge.Data.Context;
 using ConsultaIbge.Domain.Entities;
 using ConsultaIbge.Domain.Interfaces;
@@ -17,31 +18,20 @@ public class LocalityRepository : ILocalityRepository
 
     public IUnitOfWork UnitOfWork => _context;
 
-    //public async Task<PagedResult<Locality>> GetAllAsync(int pageSize, int pageIndex, string query = null)
-    //{
-    //    var ibgeQuery = _context.Localities.AsQueryable();
+    public async Task<PagedResult<Locality>> GetAsync(int pageSize, int pageIndex, string query = null, FlagQueryEnum flag = FlagQueryEnum.Default)
+    {
+        var localityQuery = DefineQueryByFlag(query, flag);
 
-    //    var ibge = await ibgeQuery.AsNoTrackingWithIdentityResolution()
-    //                              .Where(x => EF.Functions.Like(x.State, $"%{query}%"))
-    //                              .OrderBy(x => x.State)
-    //                              .Skip(pageSize * (pageIndex - 1))
-    //                              .Take(pageSize).ToListAsync();
+        var locality = await localityQuery.AsNoTrackingWithIdentityResolution()
+                                  .OrderBy(x => x.State)
+                                  .Skip(pageSize * (pageIndex - 1))
+                                  .Take(pageSize).ToListAsync();
 
-    //    var total = await ibgeQuery.AsNoTrackingWithIdentityResolution()
-    //                               .Where(x => EF.Functions.Like(x.State, $"%{query}%"))
-    //                               .CountAsync();
+        var total = await localityQuery.AsNoTrackingWithIdentityResolution().CountAsync();
 
-    //    return new PagedResult<Locality>()
-    //    {
-    //        List = ibge,
-    //        TotalResults = total,
-    //        PageIndex = pageIndex,
-    //        PageSize = pageSize,
-    //        Query = query
-    //    };
+        return new PagedResult<Locality>(locality, total, pageIndex, pageSize, query);
 
-    //}
-    public async Task<IEnumerable<Locality>> GetAllAsync() => await _context.Localities.ToListAsync();
+    }
 
     public async Task<Locality> GetByIdAsync(string id) => await _context.Localities.AsNoTracking().SingleOrDefaultAsync(x => x.Id == id);
 
@@ -52,4 +42,17 @@ public class LocalityRepository : ILocalityRepository
     public void Delete(Locality entity) => _context.Localities.Remove(entity);
 
     public void Dispose() => _context.Dispose();
+
+    #region Private Methods
+    private IQueryable<Locality> DefineQueryByFlag(string query, FlagQueryEnum flag)
+    {
+        return flag switch
+        {
+            FlagQueryEnum.City => _context.Localities.AsQueryable().Where(x => EF.Functions.Like(x.City, $"%{query}%")),
+            FlagQueryEnum.State => _context.Localities.AsQueryable().Where(x => EF.Functions.Like(x.State, $"%{query}%")),
+            FlagQueryEnum.Ibge => _context.Localities.AsQueryable().Where(x => EF.Functions.Like(x.Id, $"%{query}%")),
+            _ => _context.Localities.AsQueryable().Where(x => EF.Functions.Like(x.State, $"%{query}%")),
+        };
+    } 
+    #endregion
 }
