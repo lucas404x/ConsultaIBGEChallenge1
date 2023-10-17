@@ -73,17 +73,57 @@ public static class LocalityEndpoints
         return app;
     }
 
-    public static async Task<PagedResult<Locality>> GetAll([FromServices] ILocalityService _service, [FromQuery] int ps = 10, [FromQuery] int page = 1, [FromQuery] string query = null) => 
-        await _service.GetAllAsync(ps, page, query);
+    public static async Task<IResult> GetAll([FromServices] ILocalityService _service, [FromQuery] int ps = 10, [FromQuery] int page = 1, [FromQuery] string query = null)
+    {
+        var response = new ApiResponse<PagedResult<Locality>>();
+        var result = await _service.GetAllAsync(ps, page, query);
+        if(result.TotalResults == 0)
+        {
+            response.SetError("A consulta não encontrou nenhum resultado.");
+            return Results.Json(response, statusCode: StatusCodes.Status404NotFound);
+        }
+        response.SetSuccess(result);
+        return Results.Ok(response);
+    }
 
-    public static async Task<PagedResult<Locality>> GetByCity([FromServices] ILocalityService _service, [FromQuery] int ps = 10, [FromQuery] int page = 1, [FromQuery] string query = null) =>
-            await _service.GetByCityAsync(ps, page, query);
+    public static async Task<IResult> GetByCity([FromServices] ILocalityService _service, [FromQuery] int ps = 10, [FromQuery] int page = 1, [FromQuery] string query = null)
+    {
+        var response = new ApiResponse<PagedResult<Locality>>();
+        var result = await _service.GetByCityAsync(ps, page, query);
+        if (result.TotalResults == 0)
+        {
+            response.SetError("A consulta não encontrou nenhum resultado.");
+            return Results.Json(response, statusCode: StatusCodes.Status404NotFound);
+        }
+        response.SetSuccess(result);
+        return Results.Ok(response);
+    }
 
-    public static async Task<PagedResult<Locality>> GetByState([FromServices] ILocalityService _service, [FromQuery] int ps = 10, [FromQuery] int page = 1, [FromQuery] string query = null) =>
-        await _service.GetByStateAsync(ps, page, query);
+    public static async Task<IResult> GetByState([FromServices] ILocalityService _service, [FromQuery] int ps = 10, [FromQuery] int page = 1, [FromQuery] string query = null)
+    {
+        var response = new ApiResponse<PagedResult<Locality>>();
+        var result = await _service.GetByStateAsync(ps, page, query);
+        if (result.TotalResults == 0)
+        {
+            response.SetError("A consulta não encontrou nenhum resultado.");
+            return Results.Json(response, statusCode: StatusCodes.Status404NotFound);
+        }
+        response.SetSuccess(result);
+        return Results.Ok(response);
+    }
 
-    public static async Task<PagedResult<Locality>> GetByIbgeCode([FromServices] ILocalityService _service, [FromQuery] int ps = 10, [FromQuery] int page = 1, [FromQuery] string query = null) =>
-        await _service.GetByIbgeCodeAsync(ps, page, query);
+    public static async Task<IResult> GetByIbgeCode([FromServices] ILocalityService _service, [FromQuery] int ps = 10, [FromQuery] int page = 1, [FromQuery] string query = null)
+    {
+        var response = new ApiResponse<PagedResult<Locality>>();
+        var result = await _service.GetByIbgeCodeAsync(ps, page, query);
+        if (result.TotalResults == 0)
+        {
+            response.SetError("A consulta não encontrou nenhum resultado.");
+            return Results.Json(response, statusCode: StatusCodes.Status404NotFound);
+        }
+        response.SetSuccess(result);
+        return Results.Ok(response);
+    }
 
     public static async Task<IResult> AddLocality([FromServices] ILocalityService _service, [FromBody] LocalityAddDto request)
     {

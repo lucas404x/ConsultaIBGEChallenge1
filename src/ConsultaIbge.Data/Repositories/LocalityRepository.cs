@@ -1,4 +1,5 @@
 ﻿using ConsultaIbge.Core.Data;
+using ConsultaIbge.Core.Enums;
 using ConsultaIbge.Data.Context;
 using ConsultaIbge.Domain.Entities;
 using ConsultaIbge.Domain.Interfaces;
@@ -17,7 +18,7 @@ public class LocalityRepository : ILocalityRepository
 
     public IUnitOfWork UnitOfWork => _context;
 
-    public async Task<PagedResult<Locality>> GetAsync(int pageSize, int pageIndex, string query = null, string flag = "default")
+    public async Task<PagedResult<Locality>> GetAsync(int pageSize, int pageIndex, string query = null, FlagQueryEnum flag = FlagQueryEnum.Default)
     {
         var localityQuery = DefineQueryByFlag(query, flag);
 
@@ -43,13 +44,13 @@ public class LocalityRepository : ILocalityRepository
     public void Dispose() => _context.Dispose();
 
     #region Private Methods
-    private IQueryable<Locality> DefineQueryByFlag(string query = null, string flag = null)
+    private IQueryable<Locality> DefineQueryByFlag(string query, FlagQueryEnum flag)
     {
         return flag switch
         {
-            "city" => _context.Localities.AsQueryable().Where(x => EF.Functions.Like(x.City, $"%{query}%")),
-            "state" => _context.Localities.AsQueryable().Where(x => EF.Functions.Like(x.State, $"%{query}%")),
-            "ibge" => _context.Localities.AsQueryable().Where(x => EF.Functions.Like(x.Id, $"%{query}%")),
+            FlagQueryEnum.City => _context.Localities.AsQueryable().Where(x => EF.Functions.Like(x.City, $"%{query}%")),
+            FlagQueryEnum.State => _context.Localities.AsQueryable().Where(x => EF.Functions.Like(x.State, $"%{query}%")),
+            FlagQueryEnum.Ibge => _context.Localities.AsQueryable().Where(x => EF.Functions.Like(x.Id, $"%{query}%")),
             _ => _context.Localities.AsQueryable().Where(x => EF.Functions.Like(x.State, $"%{query}%")),
         };
     } 
