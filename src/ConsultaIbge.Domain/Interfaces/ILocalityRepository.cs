@@ -5,7 +5,7 @@ namespace ConsultaIbge.Domain.Interfaces;
 
 public interface ILocalityRepository : IRepository<Locality>
 {
-    Task<IEnumerable<Locality>> GetAllAsync();
+    Task<PagedResult<Locality>> GetAllAsync(int pageSize, int pageIndex, string query);
     Task<Locality> GetByIdAsync(string id);
 
     void Add(Locality entity);

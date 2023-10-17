@@ -14,7 +14,7 @@ public class LocalityService : ILocalityService
         _repository = repository;
     }
 
-    public async Task<IEnumerable<Locality>> GetAllAsync() => await _repository.GetAllAsync();
+    public async Task<PagedResult<Locality>>GetAllAsync(int pageSize, int pageIndex, string query) => await _repository.GetAllAsync(pageSize, pageIndex, query);
 
     public async Task<Locality?> GetByIdAsync(string id) => await _repository.GetByIdAsync(id);
 

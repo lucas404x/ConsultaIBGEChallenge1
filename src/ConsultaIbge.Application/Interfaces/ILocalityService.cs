@@ -5,7 +5,7 @@ namespace ConsultaIbge.Application.Interfaces;
 
 public interface ILocalityService
 {
-    Task<IEnumerable<Locality>> GetAllAsync();
+    Task<PagedResult<Locality>> GetAllAsync(int pageSize, int pageIndex, string query);
     Task<Locality?> GetByIdAsync(string id);
 
     Task<bool> Add(LocalityAddDto entity);

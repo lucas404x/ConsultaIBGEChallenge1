@@ -16,6 +16,13 @@ public static class LocalityEndpoints
             .WithOpenApi()
             .RequireAuthorization();
 
+        root.MapGet("/", GetAll)
+            .Produces<PagedResult<Locality>>()
+            .ProducesProblem(StatusCodes.Status404NotFound)
+            .ProducesProblem(StatusCodes.Status422UnprocessableEntity)
+            .ProducesProblem(StatusCodes.Status500InternalServerError)
+            .WithSummary("Get all Localities");
+
         root.MapGet("/{id}", GetLocality)
             .Produces<ApiResponse<Locality>>()
             .ProducesProblem(StatusCodes.Status404NotFound)
@@ -50,6 +57,11 @@ public static class LocalityEndpoints
             .WithSummary("Update a location given an id");
 
         return app;
+    }
+
+    public static async Task<PagedResult<Locality>> GetAll([FromServices] ILocalityService _service, [FromQuery] int ps = 10, [FromQuery] int page = 1, [FromQuery] string query = null) 
+    {
+        return await _service.GetAllAsync(ps, page, query);
     }
 
     public static async Task<IResult> GetLocality([FromServices] ILocalityService _service, [FromQuery] string id)
