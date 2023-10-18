@@ -79,11 +79,6 @@ public static class LocalityEndpoints
     {
         var response = new ApiResponse<PagedResult<Locality>>();
         var result = await _service.GetAllAsync(ps, page, query);
-        if (result.TotalResults == 0)
-        {
-            response.SetError("A consulta não encontrou nenhum resultado.");
-            return Results.Json(response, statusCode: StatusCodes.Status404NotFound);
-        }
         response.SetSuccess(result);
         return Results.Ok(response);
     }
@@ -105,11 +100,6 @@ public static class LocalityEndpoints
     {
         var response = new ApiResponse<PagedResult<Locality>>();
         var result = await _service.GetByCityAsync(ps, page, query);
-        if (result.TotalResults == 0)
-        {
-            response.SetError("A consulta não encontrou nenhum resultado.");
-            return Results.Json(response, statusCode: StatusCodes.Status404NotFound);
-        }
         response.SetSuccess(result);
         return Results.Ok(response);
     }
@@ -118,11 +108,6 @@ public static class LocalityEndpoints
     {
         var response = new ApiResponse<PagedResult<Locality>>();
         var result = await _service.GetByStateAsync(ps, page, query);
-        if (result.TotalResults == 0)
-        {
-            response.SetError("A consulta não encontrou nenhum resultado.");
-            return Results.Json(response, statusCode: StatusCodes.Status404NotFound);
-        }
         response.SetSuccess(result);
         return Results.Ok(response);
     }
@@ -131,11 +116,6 @@ public static class LocalityEndpoints
     {
         var response = new ApiResponse<PagedResult<Locality>>();
         var result = await _service.GetByIbgeCodeAsync(ps, page, query);
-        if (result.TotalResults == 0)
-        {
-            response.SetError("A consulta não encontrou nenhum resultado.");
-            return Results.Json(response, statusCode: StatusCodes.Status404NotFound);
-        }
         response.SetSuccess(result);
         return Results.Ok(response);
     }
