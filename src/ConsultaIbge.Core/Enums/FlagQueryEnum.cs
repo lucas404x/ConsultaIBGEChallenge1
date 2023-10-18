@@ -2,7 +2,7 @@
 
 public enum FlagQueryEnum
 {
-    City = 1,
+    City,
     State,
     Ibge,
     Default

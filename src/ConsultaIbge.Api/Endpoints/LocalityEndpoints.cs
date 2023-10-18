@@ -3,6 +3,7 @@ using ConsultaIbge.Application.Dtos.Locality;
 using ConsultaIbge.Application.Filters;
 using ConsultaIbge.Application.Interfaces;
 using ConsultaIbge.Domain.Entities;
+using ConsultaIbge.Domain.Exceptions.Locality;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ConsultaIbge.Api.Endpoints;
@@ -22,6 +23,8 @@ public static class LocalityEndpoints
             .ProducesProblem(StatusCodes.Status422UnprocessableEntity)
             .ProducesProblem(StatusCodes.Status500InternalServerError)
             .WithSummary("Get all locations");
+
+        root.MapGet("/{id}", GetById);
 
         root.MapGet("/get-city", GetByCity)
             .Produces<PagedResult<Locality>>()
@@ -62,7 +65,6 @@ public static class LocalityEndpoints
             .WithSummary("Update a location given an id");
 
         root.MapDelete("/{id}", RemoveLocality)
-            .AddEndpointFilter<ValidationFilter<LocalityUpdateDto>>()
             .Produces<ApiResponse<bool>>()
             .ProducesProblem(StatusCodes.Status400BadRequest)
             .ProducesProblem(StatusCodes.Status404NotFound)
@@ -73,11 +75,11 @@ public static class LocalityEndpoints
         return app;
     }
 
-    public static async Task<IResult> GetAll([FromServices] ILocalityService _service, [FromQuery] int ps = 10, [FromQuery] int page = 1, [FromQuery] string query = null)
+    public static async Task<IResult> GetAll([FromServices] ILocalityService _service, [FromQuery] int ps = 10, [FromQuery] int page = 1, [FromQuery] string? query = null)
     {
         var response = new ApiResponse<PagedResult<Locality>>();
         var result = await _service.GetAllAsync(ps, page, query);
-        if(result.TotalResults == 0)
+        if (result.TotalResults == 0)
         {
             response.SetError("A consulta não encontrou nenhum resultado.");
             return Results.Json(response, statusCode: StatusCodes.Status404NotFound);
@@ -86,7 +88,20 @@ public static class LocalityEndpoints
         return Results.Ok(response);
     }
 
-    public static async Task<IResult> GetByCity([FromServices] ILocalityService _service, [FromQuery] int ps = 10, [FromQuery] int page = 1, [FromQuery] string query = null)
+    public static async Task<IResult> GetById([FromServices] ILocalityService _service, [FromRoute] string id)
+    {
+        var response = new ApiResponse<Locality>();
+        var result = await _service.GetByIdAsync(id);
+        if (result is null)
+        {
+            response.SetError($"Não foi possível encontrar o registro '{id}'.");
+            return Results.UnprocessableEntity(response);
+        }
+        response.SetSuccess(result);
+        return Results.Ok(response);
+    }
+
+    public static async Task<IResult> GetByCity([FromServices] ILocalityService _service, [FromQuery] int ps = 10, [FromQuery] int page = 1, [FromQuery] string? query = null)
     {
         var response = new ApiResponse<PagedResult<Locality>>();
         var result = await _service.GetByCityAsync(ps, page, query);
@@ -99,7 +114,7 @@ public static class LocalityEndpoints
         return Results.Ok(response);
     }
 
-    public static async Task<IResult> GetByState([FromServices] ILocalityService _service, [FromQuery] int ps = 10, [FromQuery] int page = 1, [FromQuery] string query = null)
+    public static async Task<IResult> GetByState([FromServices] ILocalityService _service, [FromQuery] int ps = 10, [FromQuery] int page = 1, [FromQuery] string? query = null)
     {
         var response = new ApiResponse<PagedResult<Locality>>();
         var result = await _service.GetByStateAsync(ps, page, query);
@@ -112,7 +127,7 @@ public static class LocalityEndpoints
         return Results.Ok(response);
     }
 
-    public static async Task<IResult> GetByIbgeCode([FromServices] ILocalityService _service, [FromQuery] int ps = 10, [FromQuery] int page = 1, [FromQuery] string query = null)
+    public static async Task<IResult> GetByIbgeCode([FromServices] ILocalityService _service, [FromQuery] int ps = 10, [FromQuery] int page = 1, [FromQuery] string? query = null)
     {
         var response = new ApiResponse<PagedResult<Locality>>();
         var result = await _service.GetByIbgeCodeAsync(ps, page, query);
@@ -138,7 +153,7 @@ public static class LocalityEndpoints
         return Results.Ok(response);
     }
 
-    public static async Task<IResult> UpdateLocality([FromServices] ILocalityService _service, [FromBody] LocalityUpdateDto request, [FromQuery] string id)
+    public static async Task<IResult> UpdateLocality([FromServices] ILocalityService _service, [FromBody] LocalityUpdateDto request, [FromRoute] string id)
     {
         var response = new ApiResponse<bool>();
         if (id != request.Id)
@@ -146,35 +161,49 @@ public static class LocalityEndpoints
             response.SetError("O id informado na entity e o id informado no header não coincidem.");
             return Results.BadRequest(response);
         }
-        var locality = await _service.GetByIdAsync(id);
-        if (locality is null)
+        try
         {
-            response.SetError($"O id '{request.Id}' não foi encontrado.");
-            return Results.NotFound(response);
+            var result = await _service.Update(request);
+            if (!result)
+            {
+                response.SetError($"Não foi possível atualizar o registro '{request.Id}'");
+                return Results.Json(response, statusCode: StatusCodes.Status500InternalServerError);
+            }
+            response.SetSuccess(true);
+            return Results.Ok(response);
         }
-        var result = await _service.Update(request);
-        if (!result)
+        catch (LocalityNotFoundException ex)
         {
-            response.SetError($"Não foi possível atualizar o registro '{request.Id}'");
+            response.SetError(ex.Message);
+            return Results.UnprocessableEntity(response);
+        }
+        catch (Exception ex)
+        {
+            response.SetError(ex.Message);
             return Results.Json(response, statusCode: StatusCodes.Status500InternalServerError);
         }
-        response.SetSuccess(true);
-        return Results.Ok(response);
     }
 
-    public static async Task<IResult> RemoveLocality([FromServices] ILocalityService _service, [FromQuery] string id)
+    public static async Task<IResult> RemoveLocality([FromServices] ILocalityService _service, [FromRoute] string id)
     {
         var response = new ApiResponse<bool>();
-        var locality = await _service.GetByIdAsync(id);
-        if (locality is null)
+        try
         {
-            response.SetError($"O id '{id}' não foi encontrado.");
-            return Results.NotFound(response);
+            var result = await _service.Delete(id);
+            if (!result)
+            {
+                response.SetError($"Não foi possível deletar o registro '{id}'");
+                return Results.Json(response, statusCode: StatusCodes.Status500InternalServerError);
+            }
         }
-        var result = await _service.Delete(id);
-        if (!result)
+        catch (LocalityNotFoundException ex)
         {
-            response.SetError($"Não foi possível deletar o registro '{id}'");
+            response.SetError(ex.Message);
+            return Results.UnprocessableEntity(response);
+        }
+        catch (Exception ex)
+        {
+            response.SetError(ex.Message);
             return Results.Json(response, statusCode: StatusCodes.Status500InternalServerError);
         }
         return Results.Ok(response);

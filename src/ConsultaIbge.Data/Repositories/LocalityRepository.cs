@@ -18,22 +18,20 @@ public class LocalityRepository : ILocalityRepository
 
     public IUnitOfWork UnitOfWork => _context;
 
-    public async Task<PagedResult<Locality>> GetAsync(int pageSize, int pageIndex, string query = null, FlagQueryEnum flag = FlagQueryEnum.Default)
+    public async Task<PagedResult<Locality>> GetAsync(int pageSize, int pageIndex, string? query, FlagQueryEnum flag = FlagQueryEnum.Default)
     {
         var localityQuery = DefineQueryByFlag(query, flag);
-
         var locality = await localityQuery.AsNoTrackingWithIdentityResolution()
                                   .OrderBy(x => x.State)
                                   .Skip(pageSize * (pageIndex - 1))
                                   .Take(pageSize).ToListAsync();
-
         var total = await localityQuery.AsNoTrackingWithIdentityResolution().CountAsync();
-
         return new PagedResult<Locality>(locality, total, pageIndex, pageSize, query);
-
     }
 
-    public async Task<Locality> GetByIdAsync(string id) => await _context.Localities.AsNoTracking().SingleOrDefaultAsync(x => x.Id == id);
+    public async Task<Locality?> GetByIdAsync(string id) => await _context.Localities.AsNoTracking().SingleOrDefaultAsync(x => x.Id == id);
+
+    public async Task<bool> ExistsAsync(string id) => await _context.Localities.AsNoTracking().AnyAsync(x => x.Id == id);
 
     public void Add(Locality entity) => _context.Localities.Add(entity);
 
@@ -44,8 +42,9 @@ public class LocalityRepository : ILocalityRepository
     public void Dispose() => _context.Dispose();
 
     #region Private Methods
-    private IQueryable<Locality> DefineQueryByFlag(string query, FlagQueryEnum flag)
+    private IQueryable<Locality> DefineQueryByFlag(string? query, FlagQueryEnum flag)
     {
+        if (string.IsNullOrWhiteSpace(query)) return _context.Localities.AsQueryable();
         return flag switch
         {
             FlagQueryEnum.City => _context.Localities.AsQueryable().Where(x => EF.Functions.Like(x.City, $"%{query}%")),
