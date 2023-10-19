@@ -127,16 +127,16 @@ Clone o projeto
   git clone https://github.com/lucas404x/ConsultaIBGEChallenge1
 ```
 
-Entre no diretório do projeto
-
-```psw
-  cd src
-```
-
 Instale as dependências
 
 ```psw
   dotnet restore
+```
+
+Entre no diretório do projeto
+
+```psw
+  cd .\src\ConsultaIbge.Api\
 ```
 
 Como o JWT foi implementado no projeto, é necessário que você defina uma chave privada através do dotnet secret manager. Basta rodar o comando:
