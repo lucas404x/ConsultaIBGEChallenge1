@@ -20,6 +20,7 @@ Antes de iniciar a documentação, vale ressaltar que todas as responses foram p
 Existirão duas situações na aplicação:
 - success -> "result" virá sempre com algum valor e "errors" como uma lista vazia.
 - fail -> "result" virá sempre como null e "errors" com uma ou mais mensagens.
+
 Isso significa que sempre que tratarmos de "retornos" durante a documentação estamos nos referindo ao valor retornado na propriedade "result".
 
 ### Login
