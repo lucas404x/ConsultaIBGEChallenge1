@@ -144,7 +144,7 @@ Como o JWT foi implementado no projeto, é necessário que você defina uma chav
 ```psw
   dotnet user-secrets set "Auth:PrivateKey" "YOUR_BASE64_KEY"
 ```
-Para gerar a chave recomendamos acessar esse [ferramenta](https://codepen.io/corenominal/pen/rxOmMJ) e, posteriormente, acessar esse [outra](https://www.base64encode.net/) para encodar a chave para base64.
+Para gerar a chave recomendamos acessar esse [ferramenta](https://codepen.io/corenominal/pen/rxOmMJ) e, posteriormente, acessar essa [outra](https://www.base64encode.net/) para encodar a chave para base64.
 
 Com tudo isso definido, basta rodar o seguinte comando para executar a API: 
 ```psw
