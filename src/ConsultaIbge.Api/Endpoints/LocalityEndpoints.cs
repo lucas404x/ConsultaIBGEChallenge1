@@ -24,7 +24,12 @@ public static class LocalityEndpoints
             .ProducesProblem(StatusCodes.Status500InternalServerError)
             .WithSummary("Get all locations");
 
-        root.MapGet("/{id}", GetById);
+        root.MapGet("/{id}", GetById)
+            .Produces<Locality>()
+            .ProducesProblem(StatusCodes.Status404NotFound)
+            .ProducesProblem(StatusCodes.Status422UnprocessableEntity)
+            .ProducesProblem(StatusCodes.Status500InternalServerError)
+            .WithSummary("Get a location by Id"); ;
 
         root.MapGet("/get-city", GetByCity)
             .Produces<PagedResult<Locality>>()
@@ -90,7 +95,7 @@ public static class LocalityEndpoints
         if (result is null)
         {
             response.SetError($"Não foi possível encontrar o registro '{id}'.");
-            return Results.UnprocessableEntity(response);
+            return Results.NotFound(response);
         }
         response.SetSuccess(result);
         return Results.Ok(response);
