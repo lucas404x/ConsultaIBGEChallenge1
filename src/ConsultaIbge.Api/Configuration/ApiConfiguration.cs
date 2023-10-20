@@ -18,7 +18,7 @@ public static class ApiConfiguration
             x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
         }).AddJwtBearer(x =>
         {
-            x.RequireHttpsMetadata = true;
+            //x.RequireHttpsMetadata = true;
             x.SaveToken = true;
             x.TokenValidationParameters = new TokenValidationParameters
             {
@@ -54,7 +54,7 @@ public static class ApiConfiguration
         app.UseAuthentication();
         app.UseAuthorization();
 
-        app.UseHttpsRedirection();
+        //app.UseHttpsRedirection();
 
         app.UseCors("Total");
     }
