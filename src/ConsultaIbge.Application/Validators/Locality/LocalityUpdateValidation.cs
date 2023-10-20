@@ -1,4 +1,5 @@
 ﻿using ConsultaIbge.Application.Dtos.Locality;
+using ConsultaIbge.Application.Validators.Commom;
 using FluentValidation;
 
 namespace ConsultaIbge.Application.Validators.Locality;
@@ -8,10 +9,7 @@ public class LocalityUpdateValidation : AbstractValidator<LocalityUpdateDto>
     public LocalityUpdateValidation()
     {
         RuleFor(x => x.Id)
-            .NotEmpty()
-            .WithMessage("É necessário informar o Id")
-            .Length(7, 7)
-            .WithMessage("O Id deve ter 7 caracteres");
+            .SetValidator(x => new IdValidation());
 
         RuleFor(x => x.State)
             .NotEmpty()
