@@ -12,6 +12,7 @@ builder.Services.RegisterServices();
 var app = builder.Build();
 app.UseSwaggerConfiguration();
 app.UseApiConfiguration();
+app.MapHomeEndpoints();
 app.MapUserEndpoints();
 app.MapLocalityEndpoints();
 
