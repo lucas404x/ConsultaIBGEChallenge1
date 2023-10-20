@@ -12,6 +12,7 @@ O desafio consiste no desenvolvimento de uma WebAPI que seja capaz de realizar d
 - Swagger
 - JWT
 - XUnit
+- NSubstitute
 ## Documentação da API
 Antes de iniciar a documentação, vale ressaltar que todas as responses foram padronizadas seguindo o seguinte modelo:
 ```javascript
