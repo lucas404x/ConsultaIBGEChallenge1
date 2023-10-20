@@ -28,10 +28,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Validations\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\..\src\ConsultaIbge.Application\ConsultaIbge.Application.csproj" />
     <ProjectReference Include="..\..\src\ConsultaIbge.Domain\ConsultaIbge.Domain.csproj" />
   </ItemGroup>
