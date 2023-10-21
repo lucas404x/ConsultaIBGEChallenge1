@@ -4,8 +4,7 @@
 O desafio consiste no desenvolvimento de uma WebAPI que seja capaz de realizar diferentes tipos de consultas em uma [base de dados](https://github.com/andrebaltieri/ibge), além de atender os [críterios](https://baltaio.blob.core.windows.net/temp/desafio-dotnet/01-sobre.pdf) da trilha Pleno que foram estabelecidos pelo time do Balta.IO.
 ## Tecnologias
 - ASP.NET Core 7.0 with MinimalAPIs
-- Docker (Deploy to Azure)
-- SQLite
+- SQL Server
 - Entity Framework 7.0
 - Fluent Validation
 - BCrypt (Password Hashing)
