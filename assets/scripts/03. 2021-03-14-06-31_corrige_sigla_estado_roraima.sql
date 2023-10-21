@@ -1,5 +1,4 @@
-UPDATE ibge SET state = 'RR' WHERE id IN 
-(
+UPDATE [IBGE] SET [State] = 'RR' WHERE [Id] IN (
     '1400050',
     '1400027',
     '1400100',
@@ -14,5 +13,4 @@ UPDATE ibge SET state = 'RR' WHERE id IN
     '1400472',
     '1400506',
     '1400605',
-    '1400704'
-)
+    '1400704')
