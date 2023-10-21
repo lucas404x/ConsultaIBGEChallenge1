@@ -31,7 +31,7 @@ public static class ApiConfiguration
         services.AddAuthorization();
 
         var connectionString = configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
-        services.AddDbContext<ApplicationContext>(options => options.UseSqlite(connectionString));
+        services.AddDbContext<ApplicationContext>(options => options.UseSqlServer(connectionString));
 
         services.AddEndpointsApiExplorer();
 
