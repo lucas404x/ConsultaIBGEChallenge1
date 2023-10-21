@@ -363,3 +363,6 @@ MigrationBackup/
 FodyWeavers.xsd
 /src/ConsultaIbge.Api/app.db-shm
 /src/ConsultaIbge.Api/app.db-wal
+/src/ConsultaIbge.Api/Properties/ServiceDependencies
+/src/ConsultaIbge.Api/Properties/serviceDependencies.json
+/src/ConsultaIbge.Api/Properties/serviceDependencies.local.json
